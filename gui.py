@@ -65,7 +65,12 @@ class Tk:
             self.file_name.config(state='disabled')
             self.button.config(state='disabled')
 
-            print(self.get_header_list(self.path))
+            headers = self.get_header_list(self.path)
+            self.place_header(headers)
+
+            # Enable button once we are done processing data
+            self.button.config(state='normal')
+            self.get_status('Done!', 'green')
 
         else:
             message = ('The file you have selected is not the correct file! \n '
@@ -77,9 +82,13 @@ class Tk:
         """
         returns list of headers
         """
-        df = pd.Dataframe(path)
+        df = pd.read_csv(path)
         df_headers = df.columns.tolist()
         return df_headers
+
+    def place_header(self, my_list):
+        for col in my_list:
+            self.listbox.insert(0, col)
 
     def get_status(self, message, color='black'):
         """
