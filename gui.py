@@ -31,11 +31,11 @@ class Tk:
         self.listbox = tkinter.Listbox(self.input_frame, selectmode=tkinter.MULTIPLE)
         self.listbox.grid(row=2, column=0, pady=5)
 
-        self.input_area = tkinter.Label(self.input_frame, text='Press "Upload" button below to load headers from CSV file', pady=10)
+        self.input_area = tkinter.Label(self.input_frame, text='Press "Upload" button below to select csv to load headers', pady=10)
         self.input_area.grid(row=3, column=0)
 
         # ---------------------Button------------------------------------ #
-        self.button = tkinter.Button(self.input_frame, text="Upload", width=15, command=lambda: self.process_headers())
+        self.button = tkinter.Button(self.input_frame, text="Load CSV File", width=15, command=lambda: self.process_headers())
         self.button.grid(row=4, column=0)
 
         # ---------------------Status Message------------------------------------ #
