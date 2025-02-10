@@ -17,11 +17,11 @@ class Tk:
         self.frame.pack()
 
         # Main frame to store all labels so that that app will be responsive
-        self.input_frame = tkinter.LabelFrame(self.frame, text='Enter info below')
+        self.input_frame = tkinter.LabelFrame(self.frame, text='Quickly Reorganized Columns Within Minutes')
         self.input_frame.grid(row=0, column=0)
 
         # Create entry
-        file_name_text = tkinter.Label(self.input_frame, text='Enter file name below: (REQUIRED)', pady=5)
+        file_name_text = tkinter.Label(self.input_frame, text='1) Enter file name below: (REQUIRED)', pady=5)
         file_name_text.grid(row=0, column=0)
         self.file_name = tkinter.Entry(self.input_frame, width=30)
         self.file_name.grid(row=1, column=0)
@@ -31,7 +31,7 @@ class Tk:
         self.listbox = tkinter.Listbox(self.input_frame, selectmode=tkinter.MULTIPLE)
         self.listbox.grid(row=2, column=0, pady=5)
 
-        self.input_area = tkinter.Label(self.input_frame, text='Press "Upload" button below to select csv to load headers', pady=10)
+        self.input_area = tkinter.Label(self.input_frame, text='2) Press "Upload" button below to select csv to load headers', pady=10)
         self.input_area.grid(row=3, column=0)
 
         # ---------------------Button------------------------------------ #
@@ -68,9 +68,7 @@ class Tk:
             headers = self.get_header_list(self.path)
             self.place_header(headers)
 
-            # Enable button and entry field once we are done processing data
-            self.file_name.config(state='normal')
-            self.button.config(state='normal')
+            # Display message when we are done processing data
             self.get_status('CSV file header(s) has successfully loaded!', 'green')
 
         else:
