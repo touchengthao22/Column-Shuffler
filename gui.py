@@ -21,7 +21,7 @@ class Tk:
         self.input_frame.grid(row=0, column=0)
 
         # Create entry
-        file_name_text = tkinter.Label(self.input_frame, text='Enter file name below:', pady=5)
+        file_name_text = tkinter.Label(self.input_frame, text='Enter file name below: (REQUIRED)', pady=5)
         file_name_text.grid(row=0, column=0)
         self.file_name = tkinter.Entry(self.input_frame, width=30)
         self.file_name.grid(row=1, column=0)
@@ -68,9 +68,10 @@ class Tk:
             headers = self.get_header_list(self.path)
             self.place_header(headers)
 
-            # Enable button once we are done processing data
+            # Enable button and entry field once we are done processing data
+            self.file_name.config(state='normal')
             self.button.config(state='normal')
-            self.get_status('Done!', 'green')
+            self.get_status('CSV file header(s) has successfully loaded!', 'green')
 
         else:
             message = ('The file you have selected is not the correct file! \n '
@@ -87,8 +88,9 @@ class Tk:
         return df_headers
 
     def place_header(self, my_list):
+
         for col in my_list:
-            self.listbox.insert(0, col)
+            self.listbox.insert(tkinter.END, col)
 
     def get_status(self, message, color='black'):
         """
