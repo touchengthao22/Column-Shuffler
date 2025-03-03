@@ -5,6 +5,10 @@ app = Flask(__name__)
 
 @app.route('/shuffle', methods=['GET'])
 def get_shuffled_array():
+    """
+    Takes length input and returns a random sequence from 0 to length - 1 in json format
+    """
+
     try:
         length_str = request.args.get('length')
         if length_str is None:

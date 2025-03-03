@@ -109,29 +109,33 @@ class Tk:
         """
         header_list = self.get_header_list(self.path)
         length_of_header = len(header_list)
-        new_order = [None] * length_of_header
-     
-        url = f"http://127.0.0.1:5001/shuffle?length={length_of_header}"
-        response = requests.get(url)
 
-        if response.status_code == 200:
-            try:
-                self.shuffle_button.config(state="disabled")
-                shuffled_numbers = response.json().get("shuffled_numbers")
-                if shuffled_numbers is not None:
-                    self.clear_listbox()
-                    
-                    for index, value in enumerate(shuffled_numbers):
-                        shuffled_numbers[index] = header_list[shuffled_numbers[index]]
+        try:
+            url = f"http://127.0.0.1:5001/shuffle?length={length_of_header}"
+            response = requests.get(url)
 
-                    self.place_header(shuffled_numbers)
-                    self.shuffle_button.config(state="normal")
-                else:
-                    print("Key 'shuffled_numbers' not found in the response.")
-            except ValueError as e:
-                print(f"Error parsing JSON: {e}")
-        else:
-            print(f"Request failed with status code {response.status_code}")
+            if response.status_code == 200:
+                try:
+                    self.shuffle_button.config(state="disabled")
+                    shuffled_numbers = response.json().get("shuffled_numbers")
+                    if shuffled_numbers is not None:
+                        self.clear_listbox()
+                        
+                        for index, value in enumerate(shuffled_numbers):
+                            shuffled_numbers[index] = header_list[shuffled_numbers[index]]
+
+                        self.place_header(shuffled_numbers)
+                        self.shuffle_button.config(state="normal")
+                        self.get_status("Successfully reshuffled!", "green")
+                    else:
+                        print("Key 'shuffled_numbers' not found in the response.")
+                except ValueError as e:
+                    print(f"Error parsing JSON: {e}")
+            else:
+                self.get_status(f"Request failed with status code {response.status_code}", "red")
+        
+        except:
+            self.get_status("Request failed. Make sure your microservice is running", "red")
 
     def clear_listbox(self):
         """
