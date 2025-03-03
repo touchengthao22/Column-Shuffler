@@ -121,8 +121,8 @@ class Tk:
                 if shuffled_numbers is not None:
                     self.clear_listbox()
                     
-                    for i in range(len(shuffled_numbers)):
-                        shuffled_numbers[i] = header_list[shuffled_numbers[i]]
+                    for index, value in enumerate(shuffled_numbers):
+                        shuffled_numbers[index] = header_list[shuffled_numbers[index]]
 
                     self.place_header(shuffled_numbers)
                     self.shuffle_button.config(state="normal")
