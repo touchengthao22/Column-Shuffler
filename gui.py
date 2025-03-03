@@ -6,6 +6,9 @@ import pandas as pd
 
 
 class Tk:
+    """
+    Main GUI class
+    """
 
     def __init__(self):
         # set up GUI window
@@ -35,12 +38,15 @@ class Tk:
         self.input_area.grid(row=3, column=0)
 
         # ---------------------Button------------------------------------ #
-        self.button = tkinter.Button(self.input_frame, text="Load CSV File", width=15, command=lambda: self.process_headers())
+        self.button = tkinter.Button(self.input_frame, text="Load CSV File", width=15, command= self.process_headers)
         self.button.grid(row=4, column=0)
+
+        self.shuffle_button = tkinter.Button(self.input_frame, text='Reshuffle headers', width=15, command=lambda: print('test'))
+        self.shuffle_button.grid(row=6, column=0, pady=10)
 
         # ---------------------Status Message------------------------------------ #
         self.message = tkinter.Label(self.input_frame, text="", pady=10)
-        self.message.grid(row=5, column=0)
+        self.message.grid(row=7, column=0)
 
     def process_headers(self):
         """
@@ -53,7 +59,7 @@ class Tk:
 
         # Check if name entry field is empty
         elif len(self.file_name.get()) == 0:
-            message = ('Missing: file name')
+            message = 'Missing: file name'
             self.get_status(message, 'red')
 
         elif path and self.check_csv_extension(path):
@@ -86,6 +92,9 @@ class Tk:
         return df_headers
 
     def place_header(self, my_list):
+        """
+        places header into listbox
+        """
 
         for col in my_list:
             self.listbox.insert(tkinter.END, col)
