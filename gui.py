@@ -3,6 +3,7 @@ import os
 from tkinter import filedialog
 from pathlib import Path
 import pandas as pd
+import requests
 
 
 class Tk:
@@ -18,6 +19,8 @@ class Tk:
 
         self.frame = tkinter.Frame(self.window)
         self.frame.pack()
+
+        self.path = ""
 
         # Main frame to store all labels so that that app will be responsive
         self.input_frame = tkinter.LabelFrame(self.frame, text='Quickly Reorganized Columns Within Minutes')
@@ -41,7 +44,7 @@ class Tk:
         self.button = tkinter.Button(self.input_frame, text="Load CSV File", width=15, command= self.process_headers)
         self.button.grid(row=4, column=0)
 
-        self.shuffle_button = tkinter.Button(self.input_frame, text='Reshuffle headers', width=15, command=lambda: print('test'))
+        self.shuffle_button = tkinter.Button(self.input_frame, text='Reshuffle headers', width=15, state="disabled", command=self.shuffle_header)
         self.shuffle_button.grid(row=6, column=0, pady=10)
 
         # ---------------------Status Message------------------------------------ #
@@ -52,9 +55,9 @@ class Tk:
         """
         method to allow users to select path where csv file is located
         """
-        path = filedialog.askopenfilename()
+        self.path = filedialog.askopenfilename()
 
-        if not path:
+        if not self.path:
             pass
 
         # Check if name entry field is empty
@@ -62,8 +65,7 @@ class Tk:
             message = 'Missing: file name'
             self.get_status(message, 'red')
 
-        elif path and self.check_csv_extension(path):
-            self.path = path
+        elif self.path and self.check_csv_extension(self.path):
             self.get_status('Please wait while your data is being processed! \n'
                             'You will see a list of column header names above once completed', 'brown')
 
@@ -98,6 +100,44 @@ class Tk:
 
         for col in my_list:
             self.listbox.insert(tkinter.END, col)
+        
+        self.shuffle_button.config(state="normal")
+    
+    def shuffle_header(self):
+        """
+        shuffles header with microservice and place headers back into listbox
+        """
+        header_list = self.get_header_list(self.path)
+        length_of_header = len(header_list)
+        new_order = [None] * length_of_header
+     
+        url = f"http://127.0.0.1:5001/shuffle?length={length_of_header}"
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            try:
+                self.shuffle_button.config(state="disabled")
+                shuffled_numbers = response.json().get("shuffled_numbers")
+                if shuffled_numbers is not None:
+                    self.clear_listbox()
+                    
+                    for i in range(len(shuffled_numbers)):
+                        shuffled_numbers[i] = header_list[shuffled_numbers[i]]
+
+                    self.place_header(shuffled_numbers)
+                    self.shuffle_button.config(state="normal")
+                else:
+                    print("Key 'shuffled_numbers' not found in the response.")
+            except ValueError as e:
+                print(f"Error parsing JSON: {e}")
+        else:
+            print(f"Request failed with status code {response.status_code}")
+
+    def clear_listbox(self):
+        """
+        empties listbox
+        """
+        self.listbox.delete(0, tkinter.END)
 
     def get_status(self, message, color='black'):
         """
