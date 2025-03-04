@@ -35,24 +35,24 @@ class Tk:
 
         # ---------------------List box------------------------------------ #
         self.listbox = tkinter.Listbox(self.input_frame, selectmode=tkinter.MULTIPLE)
-        self.listbox.grid(row=2, column=0, pady=5)
+        self.listbox.grid(row=3, column=0, pady=5)
 
         self.input_area = tkinter.Label(self.input_frame, text='2) Press "Upload" button below to select csv to load headers', pady=10)
-        self.input_area.grid(row=3, column=0)
+        self.input_area.grid(row=4, column=0)
 
         # ---------------------Button------------------------------------ #
         self.button = tkinter.Button(self.input_frame, text="Load CSV File", width=15, command= self.process_headers)
-        self.button.grid(row=4, column=0)
+        self.button.grid(row=5, column=0)
 
         self.shuffle_button = tkinter.Button(self.input_frame, text='Reshuffle headers', width=15, state="disabled", command=self.shuffle_header)
-        self.shuffle_button.grid(row=6, column=0, pady=10)
+        self.shuffle_button.grid(row=7, column=0, pady=10)
 
-        self.add_date_button = tkinter.Button(self.input_frame, text='Add date to file name', width=15, command=self.add_date)
-        self.add_date_button.grid(row=1, column=1, pady=10)
+        self.add_date_button = tkinter.Button(self.input_frame, text='Add date to file name', width=20, command=self.add_date)
+        self.add_date_button.grid(row=2, column=0, pady=10)
 
         # ---------------------Status Message------------------------------------ #
         self.message = tkinter.Label(self.input_frame, text="", pady=10)
-        self.message.grid(row=7, column=0)
+        self.message.grid(row=8, column=0)
 
     def process_headers(self):
         """
@@ -75,6 +75,7 @@ class Tk:
             # Disable entry field and upload button once we start processing data
             self.file_name.config(state='disabled')
             self.button.config(state='disabled')
+            self.add_date_button.config(state='disabled')
 
             headers = self.get_header_list(self.path)
             self.place_header(headers)
@@ -136,7 +137,7 @@ class Tk:
                 except ValueError as e:
                     print(f"Error parsing JSON: {e}")
             else:
-                self.get_status(f"Request failed with status code {response.status_code}", "red")
+                self.get_status(f"Request failed with status code {response.status_code} \n Make sure your Microservice A is running", "red")
         
         except:
             self.get_status("Request failed. Make sure your microservice is running", "red")
@@ -148,7 +149,7 @@ class Tk:
         file_name = self.file_name.get()
     
         try:
-            url = f"http://127.0.0.1:5001/get_date?name={file_name}"
+            url = f"http://127.0.0.1:5002/get_date?name={file_name}"
             response = requests.get(url)
 
             new_name_date = response.json().get("new_name")
@@ -171,7 +172,7 @@ class Tk:
         """
         Returns status message on window
         """
-
+        self.message.config(text= "")
         self.message.config(text=message, fg=color, font='bold')
 
     def check_csv_extension(self, file_path):
