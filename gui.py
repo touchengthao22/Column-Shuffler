@@ -50,9 +50,12 @@ class Tk:
         self.add_date_button = tkinter.Button(self.input_frame, text='Add date to file name', width=20, command=self.add_date)
         self.add_date_button.grid(row=2, column=0, pady=10)
 
+        self.export_csv_button = tkinter.Button(self.input_frame, text='Export CSV', width=15, state="disabled", command=self.export_csv)
+        self.export_csv_button.grid(row=8, column=0, pady=10)
+
         # ---------------------Status Message------------------------------------ #
         self.message = tkinter.Label(self.input_frame, text="", pady=10)
-        self.message.grid(row=8, column=0)
+        self.message.grid(row=9, column=0)
 
     def process_headers(self):
         """
@@ -130,6 +133,7 @@ class Tk:
 
                         self.place_header(shuffled_numbers)
                         self.shuffle_button.config(state="normal")
+                        self.export_csv_button.config(state="normal")
                         self.get_status("Successfully reshuffled!", "green")
                     else:
                         print("Key 'shuffled_numbers' not found in the response.")
@@ -154,19 +158,46 @@ class Tk:
 
             new_name_date = response.json().get("new_name")
 
-            self.file_name.delete(0, tkinter.END)
+            self.clear_entry()
             self.file_name.insert(0, new_name_date)
             self.get_status("Date has been successfully added to file name", "green")
         
         except:
             self.get_status("Request failed. Make sure your Microservice B is running", "red")
 
+    def export_csv(self):
+        """
+        exports newly reshuffled header csv
+        """
+        file_name = self.file_name.get()
+        
+        # Get current header from listbox
+        headers = [self.listbox.get(i) for i in range(self.listbox.size())]
+
+        try:
+            url = f"http://127.0.0.1:5003/export_csv?file_name={file_name}&headers={headers}&path={self.path}"
+            response = requests.get(url)
+
+            with open(file_name, 'wb') as file:
+                file.write(response.content)
+            
+            os.startfile(file_name)
+            self.get_status("You have successfully exported the newly reshuffled header csv file", "green")
+        
+        except:
+            self.get_status("Request failed. Make sure your Microservice C is running", "red")
 
     def clear_listbox(self):
         """
         empties listbox
         """
         self.listbox.delete(0, tkinter.END)
+    
+    def clear_entry(self):
+        """
+        clears file name entr
+        """
+        self.file_name.delete(0, tkinter.END)
 
     def get_status(self, message, color='black'):
         """
