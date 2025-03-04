@@ -21,6 +21,8 @@ class Tk:
         self.frame.pack()
 
         self.path = ""
+        self.orig_header = []
+        self.cur_header = []
 
         # Main frame to store all labels so that that app will be responsive
         self.input_frame = tkinter.LabelFrame(self.frame, text='Quickly Reorganized Columns Within Minutes')
@@ -41,7 +43,7 @@ class Tk:
         self.input_area.grid(row=4, column=0)
 
         # ---------------------Button------------------------------------ #
-        self.button = tkinter.Button(self.input_frame, text="Load CSV File", width=15, command= self.process_headers)
+        self.button = tkinter.Button(self.input_frame, text="Load CSV File", width=15, command= self.process_header)
         self.button.grid(row=5, column=0)
 
         self.shuffle_button = tkinter.Button(self.input_frame, text='Reshuffle headers', width=15, state="disabled", command=self.shuffle_header)
@@ -60,48 +62,57 @@ class Tk:
         self.message = tkinter.Label(self.input_frame, text="", pady=10)
         self.message.grid(row=9, column=0)
 
-    def process_headers(self):
+    
+    def process_header(self):
         """
-        method to allow users to select path where csv file is located
+        returns list of headers and displays in listbox
         """
         self.path = filedialog.askopenfilename()
 
-        if not self.path:
-            pass
-
-        # Check if name entry field is empty
-        elif len(self.file_name.get()) == 0:
+        if len(self.file_name.get()) == 0:
             message = 'Missing: file name'
             self.get_status(message, 'red')
 
         elif self.path and self.check_csv_extension(self.path):
             self.get_status('Please wait while your data is being processed! \n'
                             'You will see a list of column header names above once completed', 'brown')
+            
+            try:
+                url = f"http://127.0.0.1:5004/extract_headers?path={self.path}"
+                response = requests.get(url)
+
+                self.orig_header = response.json().get("headers")
+                self.place_header(self.orig_header)
+            
+            except:
+                self.get_status("Request failed. Make sure your Microservice D is running", "red")
 
             # Disable entry field and upload button once we start processing data
             self.file_name.config(state='disabled')
             self.button.config(state='disabled')
             self.add_date_button.config(state='disabled')
 
-            headers = self.get_header_list(self.path)
-            self.place_header(headers)
-
             # Display message when we are done processing data
             self.get_status('CSV file header(s) has successfully loaded!', 'green')
-
+        
         else:
             message = ('The file you have selected is not the correct file! \n '
                        'Make sure you are using a .csv file.\n'
                        'Please try again!')
+            
             self.get_status(message, 'red')
-
-    def get_header_list(self, path):
+    
+    def get_header_list(self):
         """
-        returns list of headers
+        iterates thru listbox and returns headers in a list
         """
-        df = pd.read_csv(path)
-        df_headers = df.columns.tolist()
-        return df_headers
+        if len(self.cur_header) > 0:
+            self.clear_listbox()
+            
+        for item in range(self.listbox.size()):
+            self.cur_header.append(self.listbox.get(item))
+        
+        return self.cur_header
 
     def place_header(self, my_list):
         """
@@ -117,7 +128,7 @@ class Tk:
         """
         shuffles header with microservice and place headers back into listbox
         """
-        header_list = self.get_header_list(self.path)
+        header_list = self.get_header_list()
         length_of_header = len(header_list)
 
         try:
