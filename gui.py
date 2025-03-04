@@ -199,7 +199,7 @@ class Tk:
                 file.write(response.content)
             
             os.startfile(file_name)
-            self.get_status("You have successfully exported the newly reshuffled header csv file", "green")
+            self.get_status("You have successfully exported the newly reshuffled header csv file.\n You can close the program or click Start Over to process another file", "green")
         
         except:
             self.get_status("Request failed. Make sure your Microservice C is running", "red")
@@ -231,6 +231,9 @@ class Tk:
 
             self.clear_listbox()
             self.clear_entry()
+            
+            self.cur_header = []
+            self.orig_header = []
 
             self.get_status("")
 
