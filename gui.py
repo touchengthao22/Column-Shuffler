@@ -1,6 +1,6 @@
 import tkinter
 import os
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 from pathlib import Path
 import pandas as pd
 import requests
@@ -15,7 +15,7 @@ class Tk:
         # set up GUI window
         self.window = tkinter.Tk()
         self.window.title('Column Formatter')
-        self.window.geometry('750x500')
+        self.window.geometry('750x600')
 
         self.frame = tkinter.Frame(self.window)
         self.frame.pack()
@@ -52,6 +52,9 @@ class Tk:
 
         self.export_csv_button = tkinter.Button(self.input_frame, text='Export CSV', width=15, state="disabled", command=self.export_csv)
         self.export_csv_button.grid(row=8, column=0, pady=10)
+
+        self.start_over_button = tkinter.Button(self.input_frame, text='Start Over', width=20, command=self.start_over)
+        self.start_over_button.grid(row=10, column=0, pady=10)
 
         # ---------------------Status Message------------------------------------ #
         self.message = tkinter.Label(self.input_frame, text="", pady=10)
@@ -195,9 +198,27 @@ class Tk:
     
     def clear_entry(self):
         """
-        clears file name entr
+        clears file name entry
         """
         self.file_name.delete(0, tkinter.END)
+    
+    def start_over(self):
+        """
+        clears everything
+        """
+        answer = messagebox.askyesno("Warning!", "By clicking Yes, you will erase everything. Do you still want to proceed?")
+
+        if answer:
+            self.file_name.config(state="normal")
+            self.button.config(state="normal")
+            self.add_date_button.config(state="normal")
+            self.shuffle_button.config(state="disabled")
+            self.export_csv_button.config(state="disabled")
+
+            self.clear_listbox()
+            self.clear_entry()
+
+            self.get_status("")
 
     def get_status(self, message, color='black'):
         """
