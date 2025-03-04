@@ -87,10 +87,13 @@ class Tk:
             except:
                 self.get_status("Request failed. Make sure your Microservice D is running", "red")
 
-            # Disable entry field and upload button once we start processing data
+            # Disable entry field and upload button and add date button once we start processing data
             self.file_name.config(state='disabled')
             self.button.config(state='disabled')
             self.add_date_button.config(state='disabled')
+
+            # Enable export button
+            self.shuffle_button.config(state="normal")
 
             # Display message when we are done processing data
             self.get_status('CSV file header(s) has successfully loaded!', 'green')
