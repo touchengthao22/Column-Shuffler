@@ -47,6 +47,9 @@ class Tk:
         self.shuffle_button = tkinter.Button(self.input_frame, text='Reshuffle headers', width=15, state="disabled", command=self.shuffle_header)
         self.shuffle_button.grid(row=6, column=0, pady=10)
 
+        self.add_date_button = tkinter.Button(self.input_frame, text='Add date to file name', width=15, command=self.add_date)
+        self.add_date_button.grid(row=1, column=1, pady=10)
+
         # ---------------------Status Message------------------------------------ #
         self.message = tkinter.Label(self.input_frame, text="", pady=10)
         self.message.grid(row=7, column=0)
@@ -129,6 +132,7 @@ class Tk:
                         self.get_status("Successfully reshuffled!", "green")
                     else:
                         print("Key 'shuffled_numbers' not found in the response.")
+
                 except ValueError as e:
                     print(f"Error parsing JSON: {e}")
             else:
@@ -136,6 +140,26 @@ class Tk:
         
         except:
             self.get_status("Request failed. Make sure your microservice is running", "red")
+
+    def add_date(self):
+        """
+        Takes name from file name input and adds today's today to it
+        """
+        file_name = self.file_name.get()
+    
+        try:
+            url = f"http://127.0.0.1:5001/get_date?name={file_name}"
+            response = requests.get(url)
+
+            new_name_date = response.json().get("new_name")
+
+            self.file_name.delete(0, tkinter.END)
+            self.file_name.insert(0, new_name_date)
+            self.get_status("Date has been successfully added to file name", "green")
+        
+        except:
+            self.get_status("Request failed. Make sure your Microservice B is running", "red")
+
 
     def clear_listbox(self):
         """
