@@ -15,7 +15,7 @@ class Tk:
         # set up GUI window
         self.window = tkinter.Tk()
         self.window.title('Column Formatter')
-        self.window.geometry('750x600')
+        self.window.geometry('750x650')
 
         self.frame = tkinter.Frame(self.window)
         self.frame.pack()
@@ -28,9 +28,13 @@ class Tk:
         self.input_frame = tkinter.LabelFrame(self.frame, text='Quickly Reorganized Columns Within Minutes')
         self.input_frame.grid(row=0, column=0)
 
+        # Status frame 
+        self.status_frame = tkinter.LabelFrame(self.input_frame, bd=2, relief="solid")
+        self.status_frame.grid(row=10, column=0)
+
         # Create entry
-        file_name_text = tkinter.Label(self.input_frame, text='1) Enter file name below: (REQUIRED)', pady=5)
-        file_name_text.grid(row=0, column=0)
+        self.file_name_text = tkinter.Label(self.input_frame, text='1) Enter file name below: (REQUIRED)', pady=5)
+        self.file_name_text.grid(row=0, column=0)
         self.file_name = tkinter.Entry(self.input_frame, width=30)
         self.file_name.grid(row=1, column=0)
         self.file_name.config(justify='center')
@@ -39,28 +43,39 @@ class Tk:
         self.listbox = tkinter.Listbox(self.input_frame, selectmode=tkinter.MULTIPLE)
         self.listbox.grid(row=3, column=0, pady=5)
 
-        self.input_area = tkinter.Label(self.input_frame, text='2) Press "Upload" button below to select csv to load headers', pady=10)
+        # ---------------------Labels------------------------------------ #
+
+        self.input_area = tkinter.Label(self.input_frame, text='2) Press "Load CSV" button below to select csv to load headers', pady=10)
         self.input_area.grid(row=4, column=0)
+
+        self.shuffle_text = tkinter.Label(self.input_frame, text='3) Press "Reshuffle Headers" button below to reshuffle headers above', pady=10, state="disabled")
+        self.shuffle_text.grid(row=6, column=0)
+
+        self.export_csv_text = tkinter.Label(self.input_frame, text='4) Press "Export CSV" button below to export file after reshuffling', pady=10, state="disabled")
+        self.export_csv_text.grid(row=8, column=0)
 
         # ---------------------Button------------------------------------ #
         self.button = tkinter.Button(self.input_frame, text="Load CSV File", width=15, command= self.process_header)
         self.button.grid(row=5, column=0)
 
-        self.shuffle_button = tkinter.Button(self.input_frame, text='Reshuffle headers', width=15, state="disabled", command=self.shuffle_header)
-        self.shuffle_button.grid(row=7, column=0, pady=10)
+        self.shuffle_button = tkinter.Button(self.input_frame, text='Reshuffle Headers', width=15, state="disabled", command=self.shuffle_header)
+        self.shuffle_button.grid(row=7, column=0)
 
         self.add_date_button = tkinter.Button(self.input_frame, text='Add date to file name', width=20, command=self.add_date)
         self.add_date_button.grid(row=2, column=0, pady=10)
 
         self.export_csv_button = tkinter.Button(self.input_frame, text='Export CSV', width=15, state="disabled", command=self.export_csv)
-        self.export_csv_button.grid(row=8, column=0, pady=10)
+        self.export_csv_button.grid(row=9, column=0, pady=10)
 
         self.start_over_button = tkinter.Button(self.input_frame, text='Start Over', width=20, command=self.start_over)
-        self.start_over_button.grid(row=10, column=0, pady=10)
+        self.start_over_button.grid(row=12, column=0, pady=10)
 
         # ---------------------Status Message------------------------------------ #
-        self.message = tkinter.Label(self.input_frame, text="", pady=10)
-        self.message.grid(row=9, column=0)
+        self.message = tkinter.Label(self.status_frame, text="STATUS:", font=('Helvetica', 12, 'bold'), anchor="w")
+        self.message.grid(row=10, column=0)
+
+        self.message = tkinter.Label(self.status_frame, text="", pady=10)
+        self.message.grid(row=11, column=0)
 
     
     def process_header(self):
@@ -91,9 +106,12 @@ class Tk:
             self.file_name.config(state='disabled')
             self.button.config(state='disabled')
             self.add_date_button.config(state='disabled')
+            self.file_name_text.config(state="disabled")
+            self.input_area.config(state="disabled")
 
-            # Enable export button
+            # Enable shuffle button
             self.shuffle_button.config(state="normal")
+            self.shuffle_text.config(state="normal")
 
             # Display message when we are done processing data
             self.get_status('CSV file header(s) has successfully loaded!', 'green')
@@ -149,8 +167,11 @@ class Tk:
                             shuffled_numbers[index] = header_list[shuffled_numbers[index]]
 
                         self.place_header(shuffled_numbers)
+
                         self.shuffle_button.config(state="normal")
                         self.export_csv_button.config(state="normal")
+                        self.export_csv_text.config(state="normal")
+
                         self.get_status("Successfully reshuffled!", "green")
                     else:
                         print("Key 'shuffled_numbers' not found in the response.")
@@ -226,6 +247,8 @@ class Tk:
             self.file_name.config(state="normal")
             self.button.config(state="normal")
             self.add_date_button.config(state="normal")
+            self.file_name_text.config(state="disabled")
+            self.input_area.config(state="disabled")
             self.shuffle_button.config(state="disabled")
             self.export_csv_button.config(state="disabled")
 
