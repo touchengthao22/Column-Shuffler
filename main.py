@@ -117,9 +117,7 @@ class Tk:
             self.get_status('CSV file header(s) has successfully loaded!', 'green')
         
         else:
-            message = ('The file you have selected is not the correct file! \n '
-                       'Make sure you are using a .csv file.\n'
-                       'Please try again!')
+            message = ('The file you have selected is not the correct file! \n Make sure you are using a .csv file.\n Please try again!')
             
             self.get_status(message, 'red')
     
@@ -244,7 +242,7 @@ class Tk:
         """
         clears everything
         """
-        answer = messagebox.askyesno("Warning!", "By clicking Yes, you will erase everything. Do you still want to proceed?")
+        answer = messagebox.askyesno("Warning!", "By clicking Yes, you will erase everything.\nDo you still want to proceed?")
 
         if answer:
             self.file_name.config(state="normal")
