@@ -208,6 +208,7 @@ class Tk:
         exports newly reshuffled header csv
         """
         file_name = self.file_name.get()
+        file_name += ".cvs"
         
         # Get current header from listbox
         headers = [self.listbox.get(i) for i in range(self.listbox.size())]
@@ -215,9 +216,11 @@ class Tk:
         try:
             url = f"http://127.0.0.1:5003/export_csv?file_name={file_name}&headers={headers}&path={self.path}"
             response = requests.get(url)
+            
 
-            with open(file_name, 'wb') as file:
-                file.write(response.content)
+            df = pd.read_json(response.json())
+
+            df.to_csv(file_name, index=False)
             
             os.startfile(file_name)
             self.get_status("You have successfully exported the newly reshuffled header csv file.\n You can close the program or click Start Over to process another file", "green")

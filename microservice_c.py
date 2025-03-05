@@ -23,16 +23,9 @@ def export_csv():
         df = pd.read_csv(csv_path)
         df = df[headers]
 
-        output = io.StringIO()
-        df.to_csv(output, index=False)
-        output.seek(0)
+        json_data = df.to_json(orient="records")
 
-        return send_file(
-            io.BytesIO(output.getvalue().encode()),
-            mimetype='text/csv',
-            as_attachment=True,
-            download_name=file_name + '.csv'
-        )
+        return jsonify(json_data)
         
     except ValueError:
         return 'error: Invalid input', 400
