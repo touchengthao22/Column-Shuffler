@@ -31,8 +31,3 @@ Ensure that these microservices are up and running on the correct endpoints (usu
 - **Microservice C**: [http://127.0.0.1:5003/export_csv](http://127.0.0.1:5003/export_csv)
 - **Microservice D**: [http://127.0.0.1:5004/extract_headers](http://127.0.0.1:5004/extract_headers)
 
-## Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/column-formatter.git
