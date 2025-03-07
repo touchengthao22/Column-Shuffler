@@ -1,4 +1,4 @@
-# Column Formatter GUI
+# Column Shuffler GUI
 
 This project is a Tkinter-based graphical user interface (GUI) application for quickly reshuffling columns in CSV files. It allows users to:
 
